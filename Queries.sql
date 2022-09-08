@@ -5,6 +5,11 @@ SELECT Department, COUNT(Department) AS NumberOfPeople
 FROM Employees 
 GROUP BY Department;
 
+SELECT Department, EmployeeID, Name
+FROM Employees
+ORDER BY Department;
+
+
 SELECT EmployeeID, Name, (StartingSalary * 0.75) AS GrossPay
 From Employees
 WHERE Department != 'Sales'
