@@ -20,6 +20,7 @@ CREATE TABLE `Employees` (
 	`StartingSalary` decimal(10,2),
 	`BankNum` char(17),
 	`NIN` char(9),
+	`Department` ENUM('Sales', 'HR', 'Talent', 'Finance'),
     PRIMARY KEY (`EmployeeID`),
 	FOREIGN KEY (`AddressID`) REFERENCES Addresses(`AddressID`)
 );
