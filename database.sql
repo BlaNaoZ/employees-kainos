@@ -35,7 +35,7 @@ CREATE TABLE `SalesEmployees` (
 
 CREATE TABLE `Projects` (
 	`ProjectID` smallint NOT NULL UNIQUE AUTO_INCREMENT,
-	`ProjectName` varchar(30),
+	`ProjectName` varchar(30) UNIQUE,
 	PRIMARY KEY (ProjectID)
 );
 
@@ -46,3 +46,4 @@ CREATE TABLE `Project_Employees` (
 	FOREIGN KEY (`EmployeeID`) REFERENCES Employees(`EmployeeID`),
 	FOREIGN KEY (`ProjectID`) REFERENCES Projects(`ProjectID`)
 );
+
