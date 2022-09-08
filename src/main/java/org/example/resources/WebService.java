@@ -114,6 +114,34 @@ public class WebService {
     @Path("/print/{msg}")
     @Produces(MediaType.APPLICATION_JSON)
     public String getMsg(@PathParam("msg") String message) {
-        return "Hello from a RESTful Web service: " + message;
+        try {
+            Connection c = getConnection();
+            Statement st = c.createStatement();
+
+            ResultSet rs = st.executeQuery(message);
+
+            ResultSetMetaData meta = rs.getMetaData();
+            int colCount = meta.getColumnCount();
+            String response = "";
+            while (rs.next())
+            {
+                for (int col=1; col <= colCount; col++)
+                {
+                    Object value = rs.getObject(col);
+                    if (value != null)
+                    {
+                        System.out.println(value);
+                        response = response + value + "\t";
+                    }
+                }
+                response = response + "\n";
+            }
+            System.out.println(response);
+            return response;
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "Hello from a RESTful Web service.";
     }
 }
