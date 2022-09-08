@@ -13,3 +13,6 @@ SELECT Employees.EmployeeID, Name, (Commission * TotalSales / 100) AS GrossPay
 FROM Employees, SalesEmployees
 WHERE Department = 'Sales' AND Employees.EmployeeID = SalesEmployees.EmployeeID;
 
+SELECT TotalSales, SalesEmployees.EmployeeID
+FROM SalesEmployees
+WHERE TotalSales = (SELECT MAX(TotalSales) FROM SalesEmployees);
