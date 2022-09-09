@@ -3,7 +3,7 @@ USE Web_Service_JadeN;
 
 -- Setting up tables
 
--- Employee 'base' table, every Sales & Delivery employee has a 1 - 1 link to an employee record
+-- Employee 'base' table, every Sales employee has a 1 - 1 link to an employee record
 CREATE TABLE `Addresses` (
    	`AddressID` smallint NOT NULL UNIQUE AUTO_INCREMENT,
    	`AddressLineOne` varchar(70) UNIQUE NOT NULL,
