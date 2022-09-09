@@ -31,9 +31,9 @@ public class WebService {
             Properties props = new Properties();
             props.load(propsStream);
 
-            user            = props.getProperty("user");
-            password        = props.getProperty("password");
-            host            = props.getProperty("host");
+            user = props.getProperty("user");
+            password = props.getProperty("password");
+            host = props.getProperty("host");
 
             if (user == null || password == null || host == null)
                 throw new IllegalArgumentException(
@@ -63,14 +63,13 @@ public class WebService {
             String address = message.getAddress();
             String[] addressSplit = address.split(", ");
 
-            if(addressSplit.length == 4) {
+            if (addressSplit.length == 4) {
                 st.executeUpdate("INSERT INTO `Addresses` (AddressLineOne, Town, County, Postcode) VALUES ('"
                         + addressSplit[0] + "', '"
                         + addressSplit[1] + "', '"
                         + addressSplit[2] + "', '"
                         + addressSplit[3] + "');");
-            }
-            else{
+            } else {
                 st.executeUpdate("INSERT INTO `Addresses` (AddressLineOne, Town, Postcode) VALUES ("
                         + addressSplit[0] + ", "
                         + addressSplit[1] + ", "
@@ -78,10 +77,10 @@ public class WebService {
             }
 
             ResultSet addressID = st.executeQuery("SELECT AddressID FROM Addresses WHERE AddressLineOne = '" + addressSplit[0]
-                                        + "' AND Town = '" + addressSplit[1]
-                                        + "' AND Postcode = '" + addressSplit[3] +"';");
+                    + "' AND Town = '" + addressSplit[1]
+                    + "' AND Postcode = '" + addressSplit[3] + "';");
             int ID = 0;
-            if(addressID.next()){
+            if (addressID.next()) {
                 ID = addressID.getInt(1);
             }
 
@@ -96,8 +95,7 @@ public class WebService {
                             + message.getDepartment() + "');");
 
             return "Message " + message.getName();
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return "Hello from a RESTful Web service: " + message.getName();
@@ -116,13 +114,10 @@ public class WebService {
             ResultSetMetaData meta = rs.getMetaData();
             int colCount = meta.getColumnCount();
             String response = "";
-            while (rs.next())
-            {
-                for (int col=1; col <= colCount; col++)
-                {
+            while (rs.next()) {
+                for (int col = 1; col <= colCount; col++) {
                     Object value = rs.getObject(col);
-                    if (value != null)
-                    {
+                    if (value != null) {
                         System.out.println(value);
                         response = response + value + "\t";
                     }
@@ -131,8 +126,40 @@ public class WebService {
             }
             System.out.println(response);
             return response;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        catch (SQLException e) {
+        return "Hello from a RESTful Web service.";
+    }
+
+    // User story 7
+    @GET
+    @Path("/seven/PsNoEs")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getQuery() {
+        try {
+            Connection c = getConnection();
+            Statement st = c.createStatement();
+
+            ResultSet rs = st.executeQuery("SELECT p.ProjectName as 'Projects without employees' FROM Projects p "
+                    + "WHERE NOT EXISTS (SELECT 1 FROM Project_Employees pe WHERE pe.ProjectID = p.ProjectID);");
+
+            ResultSetMetaData meta = rs.getMetaData();
+            int colCount = meta.getColumnCount();
+            String response = "";
+            while (rs.next()) {
+                for (int col = 1; col <= colCount; col++) {
+                    Object value = rs.getObject(col);
+                    if (value != null) {
+                        System.out.println(value);
+                        response = response + value + "\t";
+                    }
+                }
+                response = response + "\n";
+            }
+            System.out.println(response);
+            return response;
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return "Hello from a RESTful Web service.";
