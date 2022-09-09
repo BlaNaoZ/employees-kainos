@@ -164,4 +164,55 @@ public class WebService {
         }
         return "Hello from a RESTful Web service.";
     }
+
+    @POST
+    @Path("/Seven/EsOnP")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public String sendMsg(Message message) {
+
+        try {
+            Connection c = getConnection();
+            Statement st = c.createStatement();
+
+            String address = message.getAddress();
+            String[] addressSplit = address.split(", ");
+
+            if (addressSplit.length == 4) {
+                st.executeUpdate("INSERT INTO `Addresses` (AddressLineOne, Town, County, Postcode) VALUES ('"
+                        + addressSplit[0] + "', '"
+                        + addressSplit[1] + "', '"
+                        + addressSplit[2] + "', '"
+                        + addressSplit[3] + "');");
+            } else {
+                st.executeUpdate("INSERT INTO `Addresses` (AddressLineOne, Town, Postcode) VALUES ("
+                        + addressSplit[0] + ", "
+                        + addressSplit[1] + ", "
+                        + addressSplit[2] + ");");
+            }
+
+            ResultSet addressID = st.executeQuery("SELECT AddressID FROM Addresses WHERE AddressLineOne = '" + addressSplit[0]
+                    + "' AND Town = '" + addressSplit[1]
+                    + "' AND Postcode = '" + addressSplit[3] + "';");
+            int ID = 0;
+            if (addressID.next()) {
+                ID = addressID.getInt(1);
+            }
+
+            st.executeUpdate(
+                    "INSERT INTO `Employees` (EmployeeID, AddressID, Name, StartingSalary, BankNum, NIN, Department) VALUES ("
+                            + message.getEmployeeNumber() + ", "
+                            + ID + ", '"
+                            + message.getName() + "', "
+                            + message.getSalary() + ", '"
+                            + message.getBankAcc() + "', '"
+                            + message.getNino() + "', '"
+                            + message.getDepartment() + "');");
+
+            return "Message " + message.getName();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "Hello from a RESTful Web service: " + message.getName();
+    }
 }
