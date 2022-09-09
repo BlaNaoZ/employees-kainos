@@ -63,13 +63,6 @@ public class WebService {
             String address = message.getAddress();
             String[] addressSplit = address.split(", ");
 
-            System.out.println("INSERT INTO `Addresses` (AddressLineOne, Town, County, Postcode) VALUES ('"
-                    + addressSplit[0] + "', "
-                    + addressSplit[1] + "', '"
-                    + addressSplit[2] + "', '"
-                    + addressSplit[3] + "');");
-
-
             if(addressSplit.length == 4) {
                 st.executeUpdate("INSERT INTO `Addresses` (AddressLineOne, Town, County, Postcode) VALUES ('"
                         + addressSplit[0] + "', '"
@@ -99,8 +92,8 @@ public class WebService {
                             + message.getName() + "', "
                             + message.getSalary() + ", '"
                             + message.getBankAcc() + "', '"
-                            + message.getNino() + "', "
-                            + "'Finance');");
+                            + message.getNino() + "', '"
+                            + message.getDepartment() + "');");
 
             return "Message " + message.getName();
         }

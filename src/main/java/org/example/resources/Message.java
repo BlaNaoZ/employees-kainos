@@ -12,6 +12,8 @@ public class Message {
     private int salary;
     private short employeeNumber;
 
+    private String department;
+
     public String getName() {
         return name;
     }
@@ -60,18 +62,29 @@ public class Message {
         this.employeeNumber = employeeNumber;
     }
 
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
     @JsonCreator
     public Message(@JsonProperty("name") String name,
                    @JsonProperty("address") String address,
                    @JsonProperty("nino") String nino,
                    @JsonProperty("bankAcc") String bankAcc,
                    @JsonProperty("salary") int salary,
-                   @JsonProperty("employeeNumber") short employeeNumber) {
+                   @JsonProperty("employeeNumber") short employeeNumber,
+                   @JsonProperty("department") String department
+        ) {
         this.setName(name);
         this.setAddress(address);
         this.setNino(nino);
         this.setBankAcc(bankAcc);
         this.setSalary(salary);
         this.setEmployeeNumber(employeeNumber);
+        this.setDepartment(department);
     }
 }
