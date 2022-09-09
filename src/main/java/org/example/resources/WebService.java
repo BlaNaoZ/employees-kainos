@@ -41,7 +41,7 @@ public class WebService {
                                 + "user, password, and host properties.");
 
             conn = DriverManager.getConnection("jdbc:mysql://"
-                    + host + "/Web_Service_FlorianB?useSSL=false", user, password);
+                    + host + "/Web_Service_JadeN?useSSL=false", user, password);
             return conn;
 
         } catch (Exception e) {
