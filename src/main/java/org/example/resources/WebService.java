@@ -136,13 +136,46 @@ public class WebService {
     @GET
     @Path("/seven/PsNoEs")
     @Produces(MediaType.APPLICATION_JSON)
-    public String getQuery() {
+    public String getQueryProjects() {
         try {
             Connection c = getConnection();
             Statement st = c.createStatement();
 
             ResultSet rs = st.executeQuery("SELECT p.ProjectName as 'Projects without employees' FROM Projects p "
                     + "WHERE NOT EXISTS (SELECT 1 FROM Project_Employees pe WHERE pe.ProjectID = p.ProjectID);");
+
+            ResultSetMetaData meta = rs.getMetaData();
+            int colCount = meta.getColumnCount();
+            String response = "";
+            while (rs.next()) {
+                for (int col = 1; col <= colCount; col++) {
+                    Object value = rs.getObject(col);
+                    if (value != null) {
+                        System.out.println(value);
+                        response = response + value + "\t";
+                    }
+                }
+                response = response + "\n";
+            }
+            System.out.println(response);
+            return response;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "Hello from a RESTful Web service.";
+    }
+
+    @GET
+    @Path("/seven/EsOnPs")
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getQuery() {
+        try {
+            Connection c = getConnection();
+            Statement st = c.createStatement();
+
+            ResultSet rs = st.executeQuery("SELECT COUNT(DISTINCT(e.EmployeeID)) as 'Employees on project' FROM Employees e\n" +
+                    "JOIN Project_Employees USING(EmployeeID)\n" +
+                    "WHERE ProjectID = '1';");
 
             ResultSetMetaData meta = rs.getMetaData();
             int colCount = meta.getColumnCount();
