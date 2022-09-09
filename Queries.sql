@@ -23,9 +23,9 @@ FROM SalesEmployees
 WHERE TotalSales = (SELECT MAX(TotalSales) FROM SalesEmployees);
 
 -- Queries for user story 6
-INSERT INTO Projects (ProjectName) VALUES ('Test_Project_Two');
+INSERT INTO Projects (ProjectName) VALUES ('NEW PROJECT NAME');
 
-INSERT INTO Project_Employees (ProjectID, EmployeeID) VALUES ('1', '1');
+INSERT INTO Project_Employees (ProjectID, EmployeeID) VALUES ('Project ID', 'Employee ID');
 
 SELECT p.ProjectName AS 'Project', e.Department, e.Name 
 	FROM Employees e JOIN Project_Employees pe USING(EmployeeID) 
@@ -39,6 +39,6 @@ SELECT p.ProjectName as 'Projects without employees' FROM Projects p
 SELECT e.EmployeeID, e.Name as 'Employee without projects' FROM Employees e
 	WHERE NOT EXISTS (SELECT 1 FROM Project_Employees pe WHERE pe.EmployeeID = e.EmployeeID);
     
-SELECT COUNT(DISTINCT(e.EmployeeID)) FROM Employees e
+SELECT COUNT(DISTINCT(e.EmployeeID)) as 'Employees on project' FROM Employees e
 JOIN Project_Employees USING(EmployeeID)
 WHERE ProjectID = '1';
