@@ -41,7 +41,7 @@ public class WebService {
                                 + "user, password, and host properties.");
 
             conn = DriverManager.getConnection("jdbc:mysql://"
-                    + host + "/employees?useSSL=false", user, password);
+                    + host + "/Web_Service_FlorianB?useSSL=false", user, password);
             return conn;
 
         } catch (Exception e) {
@@ -63,39 +63,44 @@ public class WebService {
             String address = message.getAddress();
             String[] addressSplit = address.split(", ");
 
+            System.out.println("INSERT INTO `Addresses` (AddressLineOne, Town, County, Postcode) VALUES ('"
+                    + addressSplit[0] + "', "
+                    + addressSplit[1] + "', '"
+                    + addressSplit[2] + "', '"
+                    + addressSplit[3] + "');");
+
+
             if(addressSplit.length == 4) {
-                st.executeQuery("INSERT INTO `Addresses` (AddressLineOne, Town, County, Postcode) VALUES ("
-                        + addressSplit[0] + ", "
-                        + addressSplit[1] + ", "
-                        + addressSplit[2] + ", "
-                        + addressSplit[3] + ")");
+                st.executeUpdate("INSERT INTO `Addresses` (AddressLineOne, Town, County, Postcode) VALUES ('"
+                        + addressSplit[0] + "', '"
+                        + addressSplit[1] + "', '"
+                        + addressSplit[2] + "', '"
+                        + addressSplit[3] + "');");
             }
             else{
-                st.executeQuery("INSERT INTO `Addresses` (AddressLineOne, Town, Postcode) VALUES ("
+                st.executeUpdate("INSERT INTO `Addresses` (AddressLineOne, Town, Postcode) VALUES ("
                         + addressSplit[0] + ", "
                         + addressSplit[1] + ", "
-                        + addressSplit[2] + ", "
-                        + addressSplit[3] + ")");
+                        + addressSplit[2] + ");");
             }
 
-            ResultSet addressID = st.executeQuery("SELECT AddressID FROM Addresses WHERE AddressLineOne = " + addressSplit[0]
-                                        + " AND Town = " + addressSplit[1]
-                                        + " AND Postcode = " + addressSplit[2]);
+            ResultSet addressID = st.executeQuery("SELECT AddressID FROM Addresses WHERE AddressLineOne = '" + addressSplit[0]
+                                        + "' AND Town = '" + addressSplit[1]
+                                        + "' AND Postcode = '" + addressSplit[3] +"';");
+            int ID = 0;
+            if(addressID.next()){
+                ID = addressID.getInt(1);
+            }
 
-            st.executeQuery(
-                    "INSERT INTO `Employee` VALUES "
-                            + addressID.getShort("AddressID")
+            st.executeUpdate(
+                    "INSERT INTO `Employees` (EmployeeID, AddressID, Name, StartingSalary, BankNum, NIN, Department) VALUES ("
                             + message.getEmployeeNumber() + ", "
-                            + message.getName() + " , "
-                            + message.getSalary() + ", "
-                            + message.getBankAcc() + ", "
-                            + message.getNino());
-            /*
-            while (rs.next()) {
-                Employee dbEmp = new Employee((short) rs.getInt("number"), rs.getInt("salary"),
-                        rs.getString("name"));
-                System.out.println(dbEmp);
-            } */
+                            + ID + ", '"
+                            + message.getName() + "', "
+                            + message.getSalary() + ", '"
+                            + message.getBankAcc() + "', '"
+                            + message.getNino() + "', "
+                            + "'Finance');");
 
             return "Message " + message.getName();
         }
@@ -109,6 +114,34 @@ public class WebService {
     @Path("/print/{msg}")
     @Produces(MediaType.APPLICATION_JSON)
     public String getMsg(@PathParam("msg") String message) {
-        return "Hello from a RESTful Web service: " + message;
+        try {
+            Connection c = getConnection();
+            Statement st = c.createStatement();
+
+            ResultSet rs = st.executeQuery(message);
+
+            ResultSetMetaData meta = rs.getMetaData();
+            int colCount = meta.getColumnCount();
+            String response = "";
+            while (rs.next())
+            {
+                for (int col=1; col <= colCount; col++)
+                {
+                    Object value = rs.getObject(col);
+                    if (value != null)
+                    {
+                        System.out.println(value);
+                        response = response + value + "\t";
+                    }
+                }
+                response = response + "\n";
+            }
+            System.out.println(response);
+            return response;
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "Hello from a RESTful Web service.";
     }
 }
